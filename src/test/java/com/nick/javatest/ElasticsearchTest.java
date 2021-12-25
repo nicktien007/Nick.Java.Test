@@ -1,10 +1,12 @@
 package com.nick.javatest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nick.javatest.config.CafeInfo;
 import com.nick.javatest.entity.Person;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -22,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -119,5 +123,33 @@ public class ElasticsearchTest {
         DeleteResponse resp = client.delete(new DeleteRequest("person", "e7-x8H0BEkR3D5eS_RSi"), RequestOptions.DEFAULT);
 
         log.info(resp.getId());
+    }
+
+    @Test
+    @SneakyThrows
+    void testGetCafeInfoByFile() {
+
+        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/cafe/taichung.json").toFile(), new TypeReference<List<CafeInfo>>() {});
+
+        log.info(cafeInfos.size() + "");
+    }
+
+    @Test
+    @SneakyThrows
+    void testAddCafeInfoToElastic() {
+
+        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/cafe/taichung.json").toFile(), new TypeReference<List<CafeInfo>>() {});
+
+        BulkRequest req = new BulkRequest();
+
+        for (CafeInfo x : cafeInfos) {
+            req.add(
+                    new IndexRequest("cafe")
+                            .id(x.getId())
+                            .source(objectMapper.writeValueAsString(x), XContentType.JSON)
+            );
+        }
+
+        client.bulk(req, RequestOptions.DEFAULT);
     }
 }
