@@ -5,6 +5,10 @@ import com.nick.javatest.entity.Person;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.IndicesClient;
@@ -77,6 +81,42 @@ public class ElasticsearchTest {
                 .source(objectMapper.writeValueAsString(person), XContentType.JSON);
 
         IndexResponse resp = client.index(req, RequestOptions.DEFAULT);
+
+        log.info(resp.getId());
+    }
+
+    @Test
+    @SneakyThrows
+    void testGetDocById() {
+
+        GetResponse resp = client.get(new GetRequest("person", "1"), RequestOptions.DEFAULT);
+
+        log.info(resp.getSourceAsString());
+    }
+
+    @Test
+    @SneakyThrows
+    void testUpdateDoc() {
+
+        GetResponse resp = client.get(new GetRequest("person", "d318e410-5b6d-46d5-936a-c2b6f9e930b6"), RequestOptions.DEFAULT);
+
+        Person person = objectMapper.readValue(resp.getSourceAsString(), Person.class);
+        person.setAddress("我超愛信用卡和提款卡");
+
+        IndexRequest req = new IndexRequest("person")
+                .id(person.getId())
+                .source(objectMapper.writeValueAsString(person), XContentType.JSON);
+
+        IndexResponse indexResponse = client.index(req, RequestOptions.DEFAULT);
+
+        log.info(indexResponse.getId());
+    }
+
+    @Test
+    @SneakyThrows
+    void testDeleteDocById() {
+
+        DeleteResponse resp = client.delete(new DeleteRequest("person", "e7-x8H0BEkR3D5eS_RSi"), RequestOptions.DEFAULT);
 
         log.info(resp.getId());
     }
