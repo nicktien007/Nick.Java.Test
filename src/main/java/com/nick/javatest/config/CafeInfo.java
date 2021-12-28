@@ -27,4 +27,10 @@ public class CafeInfo {
     private String standing_desk;
     private String mrt;
     private String open_time;
+
+    public String getLocation() {
+        return this.latitude + "," + this.longitude;
+    }
+
+    private String location;
 }

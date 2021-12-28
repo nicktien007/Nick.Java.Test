@@ -138,7 +138,7 @@ public class ElasticsearchTest {
     @SneakyThrows
     void testAddCafeInfoToElastic() {
 
-        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/cafe/taichung.json").toFile(), new TypeReference<List<CafeInfo>>() {});
+        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/cafe/cafes.json").toFile(), new TypeReference<List<CafeInfo>>() {});
 
         BulkRequest req = new BulkRequest();
 
