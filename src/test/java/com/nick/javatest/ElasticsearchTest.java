@@ -158,29 +158,28 @@ public class ElasticsearchTest {
     @SneakyThrows
     void testAddPubmedRCTInfoToElastic() {
 
-        List<PubmedRctInfo> pubmedRctInfos = getPubmedRctInfos();
-//        log.info(pubmedRctInfos.get(0).toString());
-//        log.info(pubmedRctInfos.size() + "");
+        savePubmedInfosProcess();
 
-        BulkRequest req = new BulkRequest();
-
-        for (PubmedRctInfo x : pubmedRctInfos) {
-            req.add(
-                    new IndexRequest("pubmed-rct")
-//                            .id(x.getId())
-                            .source(objectMapper.writeValueAsString(x), XContentType.JSON)
-            );
-        }
-
-        client.bulk(req, RequestOptions.DEFAULT);
+//        BulkRequest req = new BulkRequest();
+//
+//        for (PubmedRctInfo x : pubmedRctInfos) {
+//            req.add(
+//                    new IndexRequest("pubmed-rct")
+////                            .id(x.getId())
+//                            .source(objectMapper.writeValueAsString(x), XContentType.JSON)
+//            );
+//        }
+//
+//        client.bulk(req, RequestOptions.DEFAULT);
     }
 
-    private List<PubmedRctInfo> getPubmedRctInfos() {
+    private List<PubmedRctInfo> savePubmedInfosProcess() {
         List<PubmedRctInfo> pubmedRctInfos = new ArrayList<>();
 
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader("src/test/dataset/pubmed-rct/dev.txt"));
+//            BufferedReader br = new BufferedReader(new FileReader("src/test/dataset/pubmed-rct/dev.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/test/dataset/pubmed-rct/train.txt"));
 
             for (String line = br.readLine(); line != null; line = br.readLine()) {
 
@@ -190,6 +189,11 @@ public class ElasticsearchTest {
 
                 if (line.contains("###")) {
                     continue;
+                }
+
+                if (pubmedRctInfos.size() == 10000) {
+                    savePubmedInfos(pubmedRctInfos);
+                    pubmedRctInfos.clear();
                 }
 
                 String[] lineSplit = line.split("\t");
@@ -206,5 +210,26 @@ public class ElasticsearchTest {
             System.err.println("Error: Target File Cannot Be Read");
         }
         return pubmedRctInfos;
+    }
+
+    @SneakyThrows
+    private void savePubmedInfos(List<PubmedRctInfo> pubmedRctInfos) {
+
+        BulkRequest req = new BulkRequest();
+
+        for (PubmedRctInfo x : pubmedRctInfos) {
+            req.add(
+                    new IndexRequest("pubmed-rct")
+//                            .id(x.getId())
+                            .source(objectMapper.writeValueAsString(x), XContentType.JSON)
+            );
+        }
+
+        try {
+
+            client.bulk(req, RequestOptions.DEFAULT);
+        }catch (Exception e){
+            log.error(e.toString());
+        }
     }
 }
