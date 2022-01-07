@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nick.javatest.config.CafeInfo;
 import com.nick.javatest.entity.Person;
+import com.nick.javatest.entity.PubmedRctInfo;
+import com.nick.javatest.entity.PubmedType;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -24,11 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @SpringBootTest
@@ -129,7 +130,7 @@ public class ElasticsearchTest {
     @SneakyThrows
     void testGetCafeInfoByFile() {
 
-        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/cafe/taichung.json").toFile(), new TypeReference<List<CafeInfo>>() {});
+        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/dataset/taichung.json").toFile(), new TypeReference<List<CafeInfo>>() {});
 
         log.info(cafeInfos.size() + "");
     }
@@ -138,7 +139,7 @@ public class ElasticsearchTest {
     @SneakyThrows
     void testAddCafeInfoToElastic() {
 
-        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/cafe/cafes.json").toFile(), new TypeReference<List<CafeInfo>>() {});
+        List<CafeInfo> cafeInfos = objectMapper.readValue(Paths.get("src/test/dataset/cafes.json").toFile(), new TypeReference<List<CafeInfo>>() {});
 
         BulkRequest req = new BulkRequest();
 
@@ -151,5 +152,59 @@ public class ElasticsearchTest {
         }
 
         client.bulk(req, RequestOptions.DEFAULT);
+    }
+
+    @Test
+    @SneakyThrows
+    void testAddPubmedRCTInfoToElastic() {
+
+        List<PubmedRctInfo> pubmedRctInfos = getPubmedRctInfos();
+//        log.info(pubmedRctInfos.get(0).toString());
+//        log.info(pubmedRctInfos.size() + "");
+
+        BulkRequest req = new BulkRequest();
+
+        for (PubmedRctInfo x : pubmedRctInfos) {
+            req.add(
+                    new IndexRequest("pubmed-rct")
+//                            .id(x.getId())
+                            .source(objectMapper.writeValueAsString(x), XContentType.JSON)
+            );
+        }
+
+        client.bulk(req, RequestOptions.DEFAULT);
+    }
+
+    private List<PubmedRctInfo> getPubmedRctInfos() {
+        List<PubmedRctInfo> pubmedRctInfos = new ArrayList<>();
+
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("src/test/dataset/pubmed-rct/dev.txt"));
+
+            for (String line = br.readLine(); line != null; line = br.readLine()) {
+
+                if (line.equals("")) {
+                    continue;
+                }
+
+                if (line.contains("###")) {
+                    continue;
+                }
+
+                String[] lineSplit = line.split("\t");
+                String type = lineSplit[0];
+                String sentence = lineSplit[1];
+                if (PubmedType.contain(type)) {
+                    pubmedRctInfos.add(new PubmedRctInfo(sentence, PubmedType.valueOf(type)));
+
+                }
+            }
+
+            br.close();
+        } catch (Exception e) {
+            System.err.println("Error: Target File Cannot Be Read");
+        }
+        return pubmedRctInfos;
     }
 }
