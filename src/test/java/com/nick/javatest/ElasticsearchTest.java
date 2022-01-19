@@ -45,7 +45,9 @@ public class ElasticsearchTest {
     void testQueryIndex() {
 
         IndicesClient indices = client.indices();
-        GetIndexResponse response = indices.get(new GetIndexRequest("person"), RequestOptions.DEFAULT);
+//        String queryIndexName = "person";
+        String queryIndexName = "pubmed-rct";
+        GetIndexResponse response = indices.get(new GetIndexRequest(queryIndexName), RequestOptions.DEFAULT);
 
         Map<String, MappingMetadata> mappings = response.getMappings();
         for (String k : mappings.keySet()) {

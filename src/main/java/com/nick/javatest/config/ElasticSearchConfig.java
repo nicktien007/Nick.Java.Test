@@ -11,10 +11,19 @@ public class ElasticSearchConfig {
 
     @Bean
     public RestHighLevelClient client(){
+        //local
+//        return new RestHighLevelClient(RestClient.builder(
+//                new HttpHost(
+//                        "localhost",
+//                        9200,
+//                        "http"))
+//        );
+
+        //LAB
         return new RestHighLevelClient(RestClient.builder(
                 new HttpHost(
-                        "localhost",
-                        9200,
+                        "140.120.182.90",
+                        9160,
                         "http"))
         );
     }
