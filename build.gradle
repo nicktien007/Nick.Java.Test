@@ -26,6 +26,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    //CoreNLP
+    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2'
+    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2:models'
+
 }
 
 test {
