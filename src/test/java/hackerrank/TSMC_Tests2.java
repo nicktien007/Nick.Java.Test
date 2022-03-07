@@ -14,10 +14,6 @@ public class TSMC_Tests2 {
 
     @Test
     void test_2() {
-//       log.info("AA");
-//        System.out.println();
-
-
         List<Integer> score = new ArrayList<>();
         score.add(10);
         score.add(20);
