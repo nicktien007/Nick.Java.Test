@@ -28,8 +28,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     //CoreNLP
+    //https://stackoverflow.com/questions/18492608/maven-fails-to-download-corenlp-models
     implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2'
     implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2:models'
+    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2:models-chinese'
 
 }
 
