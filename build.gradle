@@ -21,17 +21,19 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'junit:junit:4.13.1'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
     //CoreNLP
     //https://stackoverflow.com/questions/18492608/maven-fails-to-download-corenlp-models
-    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2'
-    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2:models'
-    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2:models-chinese'
+//    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2'
+//    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2:models'
+//    implementation 'edu.stanford.nlp:stanford-corenlp:4.3.2:models-chinese'
 
 }
 
