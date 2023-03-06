@@ -16,7 +16,8 @@ configurations {
 }
 
 repositories {
-    mavenCentral()
+//    mavenCentral()
+    maven{url "https://repo.grails.org/grails/core"}
 }
 
 dependencies {
@@ -28,6 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
 
     //CoreNLP
     //https://stackoverflow.com/questions/18492608/maven-fails-to-download-corenlp-models
