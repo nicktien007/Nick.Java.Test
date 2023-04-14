@@ -1,10 +1,17 @@
 package com.nick.javatest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -15,19 +22,40 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 class TryCacheTests {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+
+
     @Test
+    @SneakyThrows
     void test1() {
-        Optional<Integer> result = toTry((Supplier<Integer>) () -> testMethod(3), ex -> {
-            throw new RuntimeException("bb");
-//            return Optional.empty();
-        });
+
+        List<AClass> list = new ArrayList<>();
+
+        list.add(new AClass("1", "name1"));
+        list.add(new AClass("2", "name2"));
+        list.add(new AClass("3", "name3"));
+
+        String s = objectMapper.writeValueAsString(list);
+        log.info(s);
     }
 
-    private Integer testMethod(int a) {
+
+
+    public static void readFile(String path) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        // ...
+    }
+
+    private Integer testMethod(int a) throws IOException {
 
 //        return a;
 //        throw new Exception("aa");
         throw new RuntimeException("aa");
+    }
+
+    private void method1(String v) throws Exception {
+        log.error("method1 error");
     }
 
     public static void toTry(Runnable act, Consumer<Exception> errorCallback) {
@@ -41,11 +69,30 @@ class TryCacheTests {
         }
     }
 
-    public static void toTry(Runnable act) {
+//    public static void toTry(Runnable act) {
+//        try {
+//            act.run();
+//        } catch (Exception ex) {
+//            log.error("ex error = ", ex);
+//        }
+//    }
+
+
+    public static void toTestTry(ExceptionWrapper wrapper) {
         try {
-            act.run();
-        } catch (Exception ex) {
-            log.error("ex error = ", ex);
+//            return wrapper.wrap();
+//            return wrapper.wrap();
+            wrapper.wrap();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T toTestTry2(ExceptionWrapper2<T> wrapper) {
+        try {
+            return wrapper.wrap();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -73,6 +120,8 @@ class TryCacheTests {
             return Optional.empty();
         }
     }
+
+
 }
 
 

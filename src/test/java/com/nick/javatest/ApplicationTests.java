@@ -151,17 +151,6 @@ class ApplicationTests {
         log.info(o.toString());
     }
 
-    @Test
-    void test5() {
-
-        Optional<Integer> result = Try(() -> testaa( 3), ex -> {
-//            log.error("[generatingAllhtml] sitemap error" + ex);
-            throw new IllegalArgumentException("BB");
-//            return Optional.empty();
-        });
-
-//        Runnable runnable = () -> testaa(1);
-    }
 
     public static <T> Optional<T> Try(Supplier<T> func, Function<Exception, Optional<T>> errorCallback) {
         try {
