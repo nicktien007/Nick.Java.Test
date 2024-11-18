@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
 @RequiredArgsConstructor
 public class Nick_5 {
+
 	@Test
 	void test_normalInvoke() {
 		//正常的操作

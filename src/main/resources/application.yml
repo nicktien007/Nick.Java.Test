@@ -2,3 +2,6 @@ spring:
   output:
     ansi:
       enabled: always
+
+test:
+  aa: aa,bb,cc
